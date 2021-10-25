@@ -8,11 +8,10 @@ const Product = require('../models/Product');
  */
 const getProductsStatic = async (req, res) => {
 
-    /* const products = await Product.find({ price: { $gt: 30 } })
-        .sort('price')
-        .select('name price'); */
-   
-    const products = await Product.find({company: 'ikea'});
+    //const testQuery = await Product.find({}).sort('-name price');
+    //const products = await Product.find({company: 'ikea'});
+
+    const products = await Product.find({ price: { $gt: 30 } }).sort('price').select('name price');
     if(products.length === 0){
         res.status(200).json({
             message: 'No items',
@@ -48,36 +47,25 @@ const getProductsStatic = async (req, res) => {
     //const products = await Product.find(req.query);
 
     //posibles values for filter search in query params
+    // metemos sort para filtrar por orden
     const { featured, company, name, sort, fields, numericFilters } = req.query
     const queryObject = {};
 
+    //* Featured
     //api/v1/products?featured=true
     if (featured) {
         queryObject.featured = featured === 'true' ? true : false;
     }
-    //* *********** test queryObject ****************
-    // {{URL}}/products?featured=false&page=2
-    console.log(queryObject); // { featured: false } --> return only list of featured=false
-    //* param not defined in Product Schema
-    // {{URL}}/products?page=2
-    console.log(queryObject); // {} --> return all list
-
+    
+    //* company
     // company in Schema is type: String and enum
     // enum: { values: ['ikea', 'liddy', 'caressa', 'marcos']}
     //api/v1/products?featured=false&company='ikea'
     if (company) {
         queryObject.company = company;
     }
-    //* *********** test queryObject *********** 
-    // {{URL}}/products?featured=false&company=ikea&page=3
-    console.log(queryObject); // { featured: false, company: 'ikea' }
-
-    // {{URL}}/products?featured=false&company=ikea&page=3
-    console.log(queryObject)// { featured: false, company: 'ikea' }
-
-    const products = await Product.find(queryObject);
     
-    // match exactly name
+    //* name
     /**
      * To use in mongoDB $regex, use one of the following syntaxes:
         { <field>: { $regex: /pattern/, $options: '<options>' } }
@@ -89,16 +77,26 @@ const getProductsStatic = async (req, res) => {
             name: {$regex: search, $options: 'i'}
         });
      */
-
     if (name) {
         queryObject.name = { $regex: name, $options: 'i' };
     }
 
-    //* test queryObject
-    // {{URL}}/products?featured=false&company=ikea&name=e
-    console.log(queryObject); // 6 products
+    //console.log(queryObject);
+    let result = Product.find(queryObject);
 
-
+    //*  we sort for fields received in sort param or by date
+    if (sort) {
+        // sort = (string)(name, -price), we need remove ','
+        const sortList = sort.split(',').join(' '); 
+        result = result.sort(sortList);
+        console.log(result);
+    } else {
+        const sortByDate = 'createAt'
+        result = result.sort(sortByDate);
+    }
+   
+    const products = await result;
+    //const products = await Product.find(queryObject);
 
     res.status(200).json({
         message: 'Get dynamic products list by query params',
