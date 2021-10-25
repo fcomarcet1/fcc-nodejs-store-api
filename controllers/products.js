@@ -4,6 +4,14 @@
  * Get static products list
  */
 const getProductsStatic = async (req, res) => {
+
+    /**
+     *  ********* express-async-errors(module) ***************
+     * test express-async-errors(module) for catch mongoose error
+     * and not need try{}catch(err){} in every mongoose query
+     */
+    //throw new Error('⛔⛔⛔ Testing express-async-errors(module) ⛔⛔⛔')
+
     res.status(200).json({
         message: 'Get static products list'
     });
@@ -18,7 +26,6 @@ const getProductsStatic = async (req, res) => {
         message: 'Get products list'
     });
 }
-
 
 
 module.exports = {
