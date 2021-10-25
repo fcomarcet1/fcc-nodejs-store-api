@@ -84,6 +84,7 @@ const getProductsStatic = async (req, res) => {
     //console.log(queryObject);
     let result = Product.find(queryObject);
 
+
     //*  we sort for fields received in sort param or by date
     if (sort) {
         // sort = (string)(name, -price), we need remove ','
@@ -94,7 +95,16 @@ const getProductsStatic = async (req, res) => {
         const sortByDate = 'createAt'
         result = result.sort(sortByDate);
     }
-   
+
+    // sort by fields
+    // {{URL}}/products?sort=-name,price&field=company
+    if (fields) {
+        const fieldsList = fields.split(',').join(' ');
+        console.log(fieldsList);
+        result = result.select(fieldsList);
+      }
+
+
     const products = await result;
     //const products = await Product.find(queryObject);
 
