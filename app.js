@@ -4,9 +4,13 @@
 require("dotenv").config();
 const express = require("express");
 const connectDB = require('./db/connect');
+
 const notFoundMiddleware = require('./middleware/not-found');
 const errorMiddleware = require('./middleware/error-handler');
+
 const nodeInfo = require('nodejs-info');
+
+const port = process.env.APP_PORT;
 
 const app = express();
 process.env.TZ="Europe/Madrid"
@@ -29,10 +33,11 @@ app.use(function (req, res, next) {
 
 
 // **************** LOAD FILE ROUTES ************************
+const taskRoutes = require('./routes/products');
 
 
 // ******************* REWRITE PATH ROUTES *******************
-
+app.use('/api/v1/products', taskRoutes);
 
 // ********************* TEST ROUTES *************************
 app.get("/", (req, res) => {
@@ -44,14 +49,11 @@ app.get("/node-info", (req, res) => {
   res.send(nodeInfo(req));
 });
 
-//!! Use this middleware here not in Middlewares defines
+//!! Use this middleware here not in Middlewares defines part
 app.use(notFoundMiddleware);
 app.use(errorMiddleware);
 
 // ********************* HTTP SERVER && DB *************************
-const port = process.env.APP_PORT;
-
-// DB && http server
 const start = async () => {
   try {
     await connectDB(process.env.MONGODB_CLOUD_URI);

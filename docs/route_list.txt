@@ -1,0 +1,8 @@
+# Base url 
+    http://localhost:5000/api/v1/products
+
+# Get all products
+    GET  http://localhost:5000/api/v1/products
+
+# Get all  static products
+    GET  http://localhost:5000/api/v1/products/static
