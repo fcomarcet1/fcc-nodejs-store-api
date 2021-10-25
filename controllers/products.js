@@ -81,6 +81,29 @@ const getProductsStatic = async (req, res) => {
         queryObject.name = { $regex: name, $options: 'i' };
     }
 
+
+    //* filter by numeric field example products with price < 35
+    if (numericFilters) {
+
+        const operatorMap = {
+          '>': '$gt',
+          '>=': '$gte',
+          '=': '$eq',
+          '<': '$lt',
+          '<=': '$lte',
+        };
+        const regEx = /\b(<|>|>=|=|<|<=)\b/g ;
+        let filters = numericFilters.replace(regEx, (match) => `-${operatorMap[match]}-`);
+        const options = ['price', 'rating'];
+
+        filters = filters.split(',').forEach((item) => {
+          const [field, operator, value] = item.split('-');
+          if (options.includes(field)) {
+            queryObject[field] = { [operator]: Number(value) };
+          }
+        });
+      }
+
     //console.log(queryObject);
     let result = Product.find(queryObject);
 
@@ -96,7 +119,7 @@ const getProductsStatic = async (req, res) => {
         result = result.sort(sortByDate);
     }
 
-    // sort by fields
+    //* sort by fields
     // {{URL}}/products?sort=-name,price&field=company
     if (fields) {
         const fieldsList = fields.split(',').join(' ');
