@@ -1,9 +1,13 @@
 ('use strict');
+const Product = require('../models/Product');
+
 
 /**
  * Get static products list
  */
 const getProductsStatic = async (req, res) => {
+
+    const products = await Product.find({});
 
     /**
      *  ********* express-async-errors(module) ***************
