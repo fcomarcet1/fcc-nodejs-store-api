@@ -1,4 +1,4 @@
-('use strict');
+'use strict';
 
 const notFound = (req, res) => {
     console.log('👓👓 Activated Middleware -> not found !!');

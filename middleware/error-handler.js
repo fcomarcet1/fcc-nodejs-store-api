@@ -1,4 +1,4 @@
-('use strict');
+'use strict';
 
 const errorHandlerMiddleware = async (err, req, res, next) => {
   console.log('👓👓 Activated Middleware:  errorHandler!!!');

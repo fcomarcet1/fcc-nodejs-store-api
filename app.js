@@ -1,4 +1,4 @@
-("use strict");
+"use strict";
 
 // ********************* IMPORT MODULES *************************
 require("dotenv").config();
@@ -70,7 +70,7 @@ const start = async () => {
   }
 };
 
-start();
+start().then(r => console.log('All is ready happy codding'));
 
 
 
